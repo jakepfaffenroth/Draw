@@ -129,3 +129,4 @@ function clearGrid() {
   });
   console.log(gridSize + ' in clearGrid');
 }
+// test
