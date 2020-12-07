@@ -38,7 +38,9 @@ createGrid();
 
 // Button - CREATE GRID
 gridBtn.addEventListener('click', function () {
-  if (!parseInt(tBox.value)) {
+  fillMode = false;
+  fillBtn.style.color = null;
+  if (tBox.value && !parseInt(tBox.value)) {
     alert('Grid size must be a number');
     return;
   }
