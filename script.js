@@ -4,13 +4,19 @@ var g = 100; // set color
 var b = 100; // to black
 var color = 'rgb(' + r + ',' + g + ',' + b + ')';
 
-console.log('default color: ' + color);
-
+const html = document.querySelector('HTML');
 const container = document.querySelector('#container');
 const textBox = document.querySelector('.textBox');
 const gridBtn = document.querySelector('#gridButton');
 const randColorBtn = document.querySelector('#colorButton');
 const pickColorBtn = document.querySelector('#customColor');
+const tBox = document.querySelector('.textBox');
+
+// Stop drawing whenever cursor is lifted, no matter where cursor is located
+let mousedown = false;
+html.addEventListener('mouseup', function () {
+  mousedown = false;
+});
 
 //Convert RGB to HEX and set picker color
 function componentToHex(c) {
@@ -29,17 +35,22 @@ createGrid();
 
 // Button - CREATE GRID
 gridBtn.addEventListener('click', function () {
+  if (!parseInt(tBox.value)) {
+    alert('Grid size must be a number');
+    return;
+  }
   var textEntry = '';
-  textEntry = document.querySelector('.textBox').value;
+  textEntry = tBox.value;
   textEntry = checkForNum(textEntry);
-  console.log(textEntry + ' in btn listener - got text');
+
   if (textEntry.length === 0) {
-    gridSize = 16;
+    gridSize = 20;
     console.log(gridSize + ' in btn listener (default size)');
   } else {
     gridSize = textEntry;
+    tBox.placeholder = 'Grid size: ' + gridSize;
   }
-  document.querySelector('.textBox').value = '';
+  tBox.value = '';
   clearGrid();
   createGrid();
 });
@@ -55,14 +66,14 @@ pickColorBtn.addEventListener('click', function () {
 });
 
 // Activate createGrid button from Enter key
-var tBox = document.querySelector('.textBox');
+
 tBox.addEventListener('keyup', function (event) {
   // Number 13 is the "Enter" key on the keyboard
   if (event.keyCode === 13) {
     // Cancel the default action, if needed
     event.preventDefault();
     // Trigger the button element with a click
-    document.querySelector('#button').click();
+    document.querySelector('#gridButton').click();
   }
 });
 
@@ -98,10 +109,10 @@ function getCustomColor() {
 function createGrid() {
   getRandColor();
   var squareSize = 75 / gridSize;
-  console.log('squaresize ' + squareSize);
-  console.log(gridSize + ' in createGrid (initial)');
+  // console.log('squaresize ' + squareSize);
+  // console.log(gridSize + ' in createGrid (initial)');
   gridSize *= gridSize;
-  console.log(gridSize + ' in createGrid (squared)');
+  // console.log(gridSize + ' in createGrid (squared)');
   for (let i = 0; i < gridSize; i++) {
     const gridSquare = document.createElement('div');
     gridSquare.classList.add('gridSquare');
@@ -112,12 +123,19 @@ function createGrid() {
   }
 
   // Hover effects
+
   const allGridSquares = document.querySelectorAll('.gridSquare');
   document.querySelector('.gridSquare');
 
   allGridSquares.forEach((box) => {
+    box.addEventListener('mousedown', function () {
+      mousedown = true;
+    });
+
     box.addEventListener('mouseover', function () {
-      box.style.backgroundColor = color;
+      if (mousedown) {
+        box.style.backgroundColor = color;
+      }
     });
   });
 }
